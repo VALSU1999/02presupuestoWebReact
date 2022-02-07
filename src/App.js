@@ -54,6 +54,7 @@ function App() {
               <Formulario
               guardarGasto={guardarGasto}
               guardarCrearGasto={guardarCrearGasto}
+              restante={restante}
               />
           </div>
           <div className='one-half column'>

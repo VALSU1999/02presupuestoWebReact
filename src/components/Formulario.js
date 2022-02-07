@@ -7,31 +7,47 @@ import shortid from 'shortid'
 //importamos propType
 import PropTypes from 'prop-types';
 
-const Formulario = ({guardarGasto,guardarCrearGasto}) => {
+const Formulario = ({guardarGasto,guardarCrearGasto,restante}) => {
 
     //definir variables para los gastos
     const [nombre, guardarNombre] = useState('');
     const [cantidad, guardarCantidad] = useState(0);
     const [error, guardarError] = useState(false);
+    const [errorcantidad, guardarErrorCantidad] = useState(false);
+    const [errorcero, guardarErrorCero] = useState(false);
 
     //cuando el usuario agregue un gasto
     const agregarGasto = e => {
         //para que nos mande los datos por la URL
         e.preventDefault();
-
+        
         //validar
-        if(cantidad <1 || isNaN(cantidad) || nombre.trim() === ''){
+        guardarErrorCantidad(false);
+        guardarErrorCero(false)
+        if(isNaN(cantidad) || nombre.trim() === ''){
             guardarError(true);
             return;
         }
         guardarError(false);
+
+        if(cantidad <1 ){
+            guardarErrorCero(true);
+            return;
+        }
+        guardarErrorCero(false);
+        if(cantidad>=restante){
+            guardarErrorCantidad(true);
+            return;
+        }
+        guardarErrorCantidad(false);
         //construir el gasto
         const gasto = {
             nombre,
             cantidad,
             id: shortid.generate()
         }
-        //console.log(gasto);
+
+
         //pasar el gasto al componente principal
         guardarGasto(gasto);
         guardarCrearGasto(true);
@@ -48,6 +64,13 @@ const Formulario = ({guardarGasto,guardarCrearGasto}) => {
             <h2>Agrega tus gastos aquí</h2>
             {error ? <Error
                 mensaje = "Ambos campos son Obligatorios o Presupuesto"/> : null }
+
+            {errorcantidad ? <Error
+                mensaje = "La cantida de gasto no puede ser mayor que el restante"/> : null }
+
+            {errorcero ? <Error
+                mensaje = "La cantida de gasto debe ser mayor que cero"/> : null }
+
 
             <div className='campo'>
                 <label>Nombre gasto</label>
